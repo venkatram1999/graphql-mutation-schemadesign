@@ -1,0 +1,83 @@
+type Query {
+    getAllUsers: [User!]!
+    getUserByUsername(username: String!): User
+    getAllProfiles: [Account!]!
+}
+
+type Mutation {
+    register(input: RegisterInput!): RegisterResult
+    login(input: LoginInput!): LoginResult
+    updateUser(input: UpdateUserInput!): User
+    deleteUser(username: String!): String
+}
+
+interface Account {
+    id: ID
+    username: String
+    role: UserRole
+}
+
+type User implements Account {
+    id: ID
+    username: String
+    role: UserRole
+    status: UserStatus
+}
+
+type Admin implements Account {
+    id: ID
+    username: String
+    role: UserRole
+    adminLevel: Int
+}
+
+type GuestUser implements Account {
+    id: ID
+    username: String
+    role: UserRole
+    visitPurpose: String
+}
+
+type AuthSuccess {
+    message: String
+    user: User
+}
+
+type AuthError {
+    message: String
+    code: String
+}
+
+union RegisterResult = AuthSuccess | AuthError
+union LoginResult = AuthSuccess | AuthError
+
+enum UserRole {
+    ADMIN
+    USER
+    GUEST
+}
+
+enum UserStatus {
+    ACTIVE
+    INACTIVE
+    BLOCKED
+}
+
+input RegisterInput {
+    username: String!
+    password: String!
+    role: UserRole!
+}
+
+input LoginInput {
+    username: String!
+    password: String!
+}
+
+input UpdateUserInput {
+    username: String!
+    newUsername: String
+    newPassword: String
+    role: UserRole
+    status: UserStatus
+}
